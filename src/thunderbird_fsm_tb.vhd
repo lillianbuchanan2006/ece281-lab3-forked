@@ -124,22 +124,22 @@ begin
 		
 		--- right blinker 
 		w_left <= '0'; w_right <= '1'; wait for k_clk_period;
-          assert w_rightlights = "001" report "should be right blinker" severity failure;
-          assert w_leftlights = "000" report "lefts lights shoudl be off on right blinker" severity failure; 
+          assert w_rightlights = "100" report "inner right blinker is on" severity failure;
+          assert w_leftlights = "000" report "lefts lights shoudld be off on right blinker" severity failure; 
 		  wait for k_clk_period; 
-		  assert w_rightlights = "011" report "should be right blinker" severity failure;
-          assert w_leftlights = "000" report "lefts lights shoudl be off on right blinker" severity failure; 
+		  assert w_rightlights = "110" report "should be right blinker" severity failure;
+          assert w_leftlights = "000" report "lefts lights should be off on right blinker" severity failure; 
 		  wait for k_clk_period; 
 		  assert w_rightlights = "111" report "should be right blinker" severity failure;
-          assert w_leftlights = "000" report "lefts lights shoudl be off on right blinker" severity failure; 
+          assert w_leftlights = "000" report "lefts lights should be off on right blinker" severity failure; 
 		  wait for k_clk_period; 
 		  
 		--- left blinker
 		w_right <= '0'; w_left <= '1'; wait for k_clk_period;
-          assert w_leftlights = "001" report "should be right blinker" severity failure;
+          assert w_leftlights = "100" report "should be right blinker" severity failure;
           assert w_rightlights = "000" report "right lights should be off on left blinker" severity failure;
           wait for k_clk_period; 
-          assert w_leftlights = "011" report "should be right blinker" severity failure;
+          assert w_leftlights = "110" report "should be right blinker" severity failure;
           assert w_rightlights = "000" report "right lights should be off on left blinker" severity failure;
           wait for k_clk_period; 
           assert w_leftlights = "111" report "should be right blinker" severity failure;
