@@ -36,18 +36,18 @@
 --|					can be changed by the inputs
 --|					
 --|
---|                 xxx State Encoding key
+--|                 Binary State Encoding key
 --|                 --------------------
 --|                  State | Encoding
 --|                 --------------------
---|                  OFF   | 
---|                  ON    | 
---|                  R1    | 
---|                  R2    | 
---|                  R3    | 
---|                  L1    | 
---|                  L2    | 
---|                  L3    | 
+--|                  OFF   | 000
+--|                  ON    | 001
+--|                  R1    | 010
+--|                  R2    | 011
+--|                  R3    | 100
+--|                  L1    | 101
+--|                  L2    | 110
+--|                  L3    | 111
 --|                 --------------------
 --|
 --|
@@ -85,24 +85,54 @@ library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
  
-entity thunderbird_fsm is 
---  port(
-	
---  );
+
+entity thunderbird_fsm is
+    port (
+        i_clk, i_reset  : in    std_logic;
+        i_left, i_right : in    std_logic;
+        o_lights_L      : out   std_logic_vector(2 downto 0);
+        o_lights_R      : out   std_logic_vector(2 downto 0)
+    );
 end thunderbird_fsm;
 
 architecture thunderbird_fsm_arch of thunderbird_fsm is 
+    signal f_Q :std_logic_vector(2 downto 0) := "000";-- default is off or 000
+	signal f_Q_next :std_logic_vector(2 downto 0) := "000";
 
 -- CONSTANTS ------------------------------------------------------------------
   
 begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
-	
+	--- Next State logic 
+	f_Q_next(0) <= (f_Q(1) and not(f_Q(0))) xor (not(f_Q(2)) and not(f_Q(0)) and i_left);
+	f_Q_next(1) <= ((not f_Q(0))and f_Q(1)) xor (not(f_Q(2))and f_Q(0) and not(i_left) and i_right ) xor (f_Q(2) and not(f_Q(1))and f_Q(0));
+	f_Q_next(2) <= f_Q(2) xor f_Q(1) xor f_Q(0);
     ---------------------------------------------------------------------------------
 	
-	-- PROCESSES --------------------------------------------------------------------
+	-- Output logic
+	o_lights_L(2) <= f_Q(0) and (f_Q(2) xor f_Q(1));
+	o_lights_L(1) <= (not(f_Q(2))and not(f_Q(1))and f_Q(0)) xor (f_Q(2) and f_Q(1));
+	o_lights_L(0) <= (not(f_Q(1)) and f_Q(0)) xor (f_Q(2) and f_Q(1));
+	
+	o_lights_R(2) <= not(f_Q(1)) and (f_Q(2) xor f_Q(0));
+	o_lights_R(1) <= (not(f_Q(1))and not(f_Q(0))and f_Q(2)) xor (not(f_Q(2))and f_Q(0));
+	o_lights_L(0) <= (not(f_Q(2)) and (f_Q(1) xor f_Q(0))) xor (f_Q(1) and f_Q(0));
+	
+
+
     
+	-- PROCESSES --------------------------------------------------------------------
+    register_proc : process (i_clk, i_reset)
+	begin
+			--Reset state is yellow
+        if i_reset = '1' then
+            f_Q <= "000";        -- reset state is off
+        elsif (rising_edge(i_clk)) then
+            f_Q <= f_Q_next;    -- next state becomes current state
+        end if;
+	end process register_proc;
+	
 	-----------------------------------------------------					   
 				  
 end thunderbird_fsm_arch;
