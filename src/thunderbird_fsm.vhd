@@ -105,22 +105,21 @@ begin
 
 	-- CONCURRENT STATEMENTS --------------------------------------------------------	
 	--- Next State logic 
-	f_Q_next(0) <= (f_Q(1) and not(f_Q(0))) xor (not(f_Q(2)) and not(f_Q(0)) and i_left);
-	f_Q_next(1) <= ((not f_Q(0))and f_Q(1)) xor (not(f_Q(2))and f_Q(0) and not(i_left) and i_right ) xor (f_Q(2) and not(f_Q(1))and f_Q(0));
-	f_Q_next(2) <= f_Q(2) xor f_Q(1) xor f_Q(0);
+	
+	f_Q_Next(2) <= ((not f_Q(2)) AND f_Q(1) AND f_Q(0)) OR (f_Q(2) AND (not f_Q(1)) AND f_Q(0)) OR (f_Q(2) AND f_Q(1) AND (not f_Q(0))) OR ((not f_Q(0)) AND (not f_Q(1)) AND (not f_Q(2)) AND i_left AND (not i_right));
+	f_Q_Next(1) <= ((not f_Q(2)) AND f_Q(1) AND (not f_Q(0))) OR (f_Q(2) AND (not f_Q(1)) AND f_Q(0)) OR (f_Q(2) AND f_Q(1) AND (not f_Q(0))) OR ((not f_Q(0)) AND (not f_Q(1)) AND (not f_Q(2)) AND (not i_left) AND i_right);
+	f_Q_Next(0) <= ((not f_Q(2)) AND f_Q(1) AND (not f_Q(0))) OR (f_Q(2) AND f_Q(1) AND (not f_Q(0))) OR ((not f_Q(0)) AND (not f_Q(1)) AND (not f_Q(2)) AND (not i_right) AND i_left) OR ((not f_Q(0)) AND (not f_Q(1)) AND (not f_Q(2)) AND i_right AND i_left);
     ---------------------------------------------------------------------------------
 	
 	-- Output logic
-	o_lights_L(2) <= f_Q(0) and (f_Q(2) xor f_Q(1));
-	o_lights_L(1) <= (not(f_Q(2))and not(f_Q(1))and f_Q(0)) xor (f_Q(2) and f_Q(1));
-	o_lights_L(0) <= (not(f_Q(1)) and f_Q(0)) xor (f_Q(2) and f_Q(1));
+	o_lights_L(2) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (f_Q(2) AND f_Q(1) AND f_Q(0));
+    o_lights_L(1) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (f_Q(2) AND f_Q(1) AND not f_Q(0)) OR (f_Q(2) AND f_Q(1) AND f_Q(0));
+    o_lights_L(0) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (f_Q(2) AND f_Q(1) AND not f_Q(0)) OR (f_Q(2) AND f_Q(1) AND f_Q(0));
 	
-	o_lights_R(2) <= not(f_Q(1)) and (f_Q(2) xor f_Q(0));
-	o_lights_R(1) <= (not(f_Q(1))and not(f_Q(0))and f_Q(2)) xor (not(f_Q(2))and f_Q(0));
-	o_lights_L(0) <= (not(f_Q(2)) and (f_Q(1) xor f_Q(0))) xor (f_Q(1) and f_Q(0));
-	
-
-
+	--R1(RC)--
+    o_lights_R(2) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (f_Q(2) AND not f_Q(1) AND not f_Q(0));
+    o_lights_R(1) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (not f_Q(2) AND f_Q(1) AND f_Q(0))OR (f_Q(2) AND not f_Q(1) AND not f_Q(0));
+    o_lights_R(0) <= (not f_Q(2) AND not f_Q(1) AND f_Q(0)) OR (not f_Q(2) AND f_Q(1) AND not f_Q(0)) OR (not f_Q(2) AND f_Q(1) AND f_Q(0))OR ( f_Q(2) AND not f_Q(1) AND not f_Q(0));
     
 	-- PROCESSES --------------------------------------------------------------------
     register_proc : process (i_clk, i_reset)
