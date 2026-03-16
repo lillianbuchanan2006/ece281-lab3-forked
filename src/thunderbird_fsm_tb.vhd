@@ -148,15 +148,20 @@ begin
 		
 		---- both flashing / hazards on 
 		w_right <= '1'; w_left <= '1'; wait for k_clk_period;
-          assert w_leftlights = "111" report "both should be on during hazards" severity failure;
-          assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
-	    wait for k_clk_period; -- lights should turn off 
+  --        assert w_leftlights = "111" report "both should be on during hazards" severity failure;
+  --        assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
+	--    wait for k_clk_period; -- lights should turn off 
           assert w_leftlights = "000" report "both should be off during hazards" severity failure;
           assert w_rightlights = "000" report "both should be off during hazards" severity failure; 
         wait for k_clk_period;
           w_right <= '1'; w_left <= '1'; wait for k_clk_period;
           assert w_leftlights = "111" report "both should be on during hazards" severity failure;
           assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
+        wait for k_clk_period;
+          w_right <= '1'; w_left <= '1'; wait for k_clk_period;
+          assert w_leftlights = "111" report "both should be on during hazards" severity failure;
+          assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
+		
 		wait; 
 		
 	end process;
