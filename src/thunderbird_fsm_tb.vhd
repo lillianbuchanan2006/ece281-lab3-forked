@@ -150,7 +150,8 @@ begin
 		w_right <= '1'; w_left <= '1'; 
   --        assert w_leftlights = "111" report "both should be on during hazards" severity failure;
   --        assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
-	   wait for k_clk_period; -- lights should turn off 
+	   wait for k_clk_period; -- lights should turn off
+	   wait for 1 ns; 
           assert w_leftlights = "111" report "both should be on during hazards" severity failure;
           assert w_rightlights = "111" report "both should be on during hazards" severity failure; 
    --     wait for k_clk_period;
