@@ -115,7 +115,7 @@ begin
 		-- sequential timing
 		--- reset timer	
 		w_reset <= '1';
-		wait for k_clk_period*1;
+		wait for k_clk_period;
 		  assert w_leftlights = "000" report "bad reset" severity failure;
 		  assert w_rightlights = "000" report "bad reset" severity failure;
 		
